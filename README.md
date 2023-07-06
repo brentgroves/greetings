@@ -71,7 +71,7 @@ package main
 import (
     "fmt"
 
-    "example.com/greetings"
+    "brentgroves/greetings"
 )
 
 func main() {
@@ -79,10 +79,31 @@ func main() {
     message := greetings.Hello("Gladys")
     fmt.Println(message)
 }
+
+Edit the example.com/hello module to use your local example.com/greetings module.
+For production use, you’d publish the example.com/greetings module from its repository (with a module path that reflected its published location), where Go tools could find it to download it. For now, because you haven't published the module yet, you need to adapt the example.com/hello module so it can find the example.com/greetings code on your local file system.
+
+To do that, use the go mod edit command to edit the example.com/hello module to redirect Go tools from its module path (where the module isn't) to the local directory (where it is).
+
+From the command prompt in the hello directory, run the following command:
+go mod edit -replace brentgroves/greetings=../greetings
+# updates go.mod with dependancies it finds
+From the command prompt in the hello directory, run the go mod tidy command to synchronize the example.com/hello module's dependencies, adding those required by the code, but not yet tracked in the module.
+go mod tidy 
+The number following the module path is a pseudo-version number -- a generated number used in place of a semantic version number (which the module doesn't have yet).
+
+To reference a published module, a go.mod file would typically omit the replace directive and use a require directive with a tagged version number at the end.
+
+require example.com/greetings v1.1.0
+
+At the command prompt in the hello directory, run your code to confirm that it works.
+$ go run .
+Hi, Gladys. Welcome!
+
 !!!!!!!!!!!!!!!!!!!!!!!!!
 Next publish the greetings module and/or finish the tutorial
 https://go.dev/doc/tutorial/call-module-code
-
+https://github.com/brentgroves/greetings
 go mod tidy
 $ git commit -m "mymodule: changes for v0.1.0"
 $ git tag v0.1.0
